@@ -4,10 +4,11 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-utils && \
-    apt-get install -y software-properties-common
+    apt-get install -y software-properties-common python-software-properties
 
 RUN PACKAGES_TO_INSTALL="sudo curl libc-dev libpcre3-dev pkg-config autoconf gcc make git cron php-pear php-dev php-xdebug php7.4-gd php7.4-intl php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm nginx supervisor libyaml-dev php7.4-mysql php-phalcon4 libgeoip-dev" && \
     apt-add-repository -y ppa:phalcon/stable && \
+    apt-add-repository -y ppa:nginx/stable && \
     LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get install -y $PACKAGES_TO_INSTALL
