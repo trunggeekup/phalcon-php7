@@ -35,9 +35,10 @@ RUN echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/fpm/php.ini && \
     echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/cli/php.ini
 
 # configure NGINX as non-daemon
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf 
+COPY nginx.conf /etc/nginx/nginx.conf
 
-RUN sed -i -e "s/user\s*nginx;/user www-data;/g" /etc/nginx/nginx.conf 
+# Remove default nginx config file
+RUN mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 
 # configure php-fpm as non-daemon
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php/7.4/fpm/php-fpm.conf
