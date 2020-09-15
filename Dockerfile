@@ -13,7 +13,6 @@ RUN PACKAGES_TO_INSTALL="sudo curl libc-dev libpcre3-dev pkg-config autoconf gcc
     apt-get install -y $PACKAGES_TO_INSTALL
 
 RUN echo "deb http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list && \
-    echo "deb http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list && \
     curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - && \
     apt-key fingerprint ABF5BD827BD9BF62 - && \
     apt-get update && \
@@ -36,7 +35,9 @@ RUN echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/fpm/php.ini && \
     echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/cli/php.ini
 
 # configure NGINX as non-daemon
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf 
+
+RUN sed -i -e "s/user\s*nginx;/user www-data;/g" /etc/nginx/nginx.conf 
 
 # configure php-fpm as non-daemon
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php/7.4/fpm/php-fpm.conf
