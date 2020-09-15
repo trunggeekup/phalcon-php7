@@ -6,12 +6,18 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-utils && \
     apt-get install -y software-properties-common python-software-properties
 
-RUN PACKAGES_TO_INSTALL="sudo curl libc-dev libpcre3-dev pkg-config autoconf gcc make git cron php-pear php-dev php-xdebug php7.4-gd php7.4-intl php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm nginx supervisor libyaml-dev php7.4-mysql php-phalcon4 libgeoip-dev" && \
+RUN PACKAGES_TO_INSTALL="sudo curl libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php-pear php-dev php-xdebug php7.4-gd php7.4-intl php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm nginx supervisor libyaml-dev php7.4-mysql php-phalcon4 libgeoip-dev" && \
     apt-add-repository -y ppa:phalcon/stable && \
-    apt-add-repository -y ppa:nginx/stable && \
     LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get install -y $PACKAGES_TO_INSTALL
+
+RUN echo "deb http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list && \
+    echo "deb http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list && \
+    curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add - && \
+    apt-key fingerprint ABF5BD827BD9BF62 - && \
+    apt-get update && \
+    apt-get install -y nginx
 
 RUN apt-get autoremove -y && \
     apt-get clean && \
