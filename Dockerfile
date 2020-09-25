@@ -47,7 +47,7 @@ RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php/7.4/fpm/php-fpm
 RUN apt-get autoclean && apt-get -y autoremove
 
 # add a phpinfo script for INFO purposes
-RUN echo "<?php phpinfo();" >> /var/www/html/index.php
+RUN mkdir /var/www && mkdir /var/www/html && echo "<?php phpinfo();" >> /var/www/html/index.php
 
 # NGINX mountable directories for config and logs
 VOLUME ["/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx"]
@@ -57,9 +57,6 @@ VOLUME ["/var/www"]
 
 # copy config file for Supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# backup default default config for NGINX
-RUN mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
 
 # copy local defualt config file for NGINX
 COPY default /etc/nginx/sites-available/default
