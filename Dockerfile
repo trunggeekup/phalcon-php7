@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-utils && \
     apt-get install -y software-properties-common python-software-properties
 
-RUN PACKAGES_TO_INSTALL="sudo curl unzip libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php-pear php-dev php-xdebug php7.4-gd php7.4-intl php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm supervisor libyaml-dev php7.4-mysql php-phalcon4 libgeoip-dev" && \
+RUN PACKAGES_TO_INSTALL="sudo curl unzip libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php7.4-dev php7.4-xdebug php7.4-gd php7.4-intl php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm supervisor libyaml-dev php7.4-mysql php7.4-phalcon4 libgeoip-dev php7.4-xml" && \
     apt-add-repository -y ppa:phalcon/stable && \
     LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
@@ -22,17 +22,17 @@ RUN apt-get autoremove -y && \
     apt-get clean && \
     apt-get autoclean
 
-# Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php composer-setup.php && \
+    php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+    php composer-setup.php  && \
     php -r "unlink('composer-setup.php');" && \
     mv composer.phar /usr/bin/composer
 
 # Install geoip
-RUN pecl install geoip-beta
+# RUN pecl install geoip-beta
 
-RUN echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/fpm/php.ini && \
-    echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/cli/php.ini
+# RUN echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/fpm/php.ini && \
+# echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/cli/php.ini
 
 # configure NGINX as non-daemon
 COPY nginx.conf /etc/nginx/nginx.conf
