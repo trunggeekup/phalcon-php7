@@ -29,10 +29,10 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     mv composer.phar /usr/bin/composer
 
 # Install geoip
-# RUN pecl install geoip-beta
+RUN pecl install geoip-beta
 
-# RUN echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/fpm/php.ini && \
-# echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/cli/php.ini
+RUN echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/fpm/php.ini && \
+    echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/cli/php.ini
 
 # configure NGINX as non-daemon
 COPY nginx.conf /etc/nginx/nginx.conf
