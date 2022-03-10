@@ -1,12 +1,14 @@
 FROM ubuntu:bionic
 
 ENV DEBIAN_FRONTEND noninteractive
+ENV composer_hash 906a84df04cea2aa72f40b5f787e49f22d4c2f19492ac310e8cba5b96ac8b64115ac402c8cd292b8a03482574915d1a8
+
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-utils && \
     apt-get install -y software-properties-common
 
-RUN PACKAGES_TO_INSTALL="sudo curl unzip libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php7.4-dev php7.4-xdebug php7.4-gd php7.4-intl php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm supervisor libyaml-dev php7.4-mysql libgeoip-dev php7.4-xml" && \
+RUN PACKAGES_TO_INSTALL="sudo curl unzip libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php7.4-dev php7.4-xdebug php7.4-gd php7.4-intl php7.4-xml php-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm supervisor libyaml-dev php7.4-mysql libgeoip-dev php7.4-redis" && \
     LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get install -y $PACKAGES_TO_INSTALL
@@ -25,12 +27,14 @@ RUN apt-get autoremove -y && \
     apt-get clean && \
     apt-get autoclean
 
+# remove option -n in pecl command to make it not install new xml package
+# RUN sed -i "$ s|\-n||g" /usr/bin/pecl
 RUN pecl install psr
 RUN echo -e "\nextension=psr.so\n" >> /etc/php/7.4/fpm/php.ini && \
     echo -e "\nextension=psr.so\n" >> /etc/php/7.4/cli/php.ini
 
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+    php -r "if (hash_file('sha384', 'composer-setup.php') === '${composer_hash}') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
     php composer-setup.php  && \
     php -r "unlink('composer-setup.php');" && \
     mv composer.phar /usr/bin/composer
