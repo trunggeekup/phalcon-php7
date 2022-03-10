@@ -2,7 +2,7 @@
 
 #### build script
 ```
-docker build -t registry-gitlab.geekup.io/prj_vision/phalcon-php7:2.0.2 .
+docker build --platform linux/amd64 -t registry-gitlab.geekup.io/prj_vision/phalcon-php7:2.0.2 .
 ```
 
 - remove package: `python-software-properties`
