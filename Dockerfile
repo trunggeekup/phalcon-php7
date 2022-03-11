@@ -27,8 +27,9 @@ RUN apt-get autoremove -y && \
     apt-get clean && \
     apt-get autoclean
 
-# remove option -n in pecl command to make it not install new xml package
-# RUN sed -i "$ s|\-n||g" /usr/bin/pecl
+# config default version php using php7.4
+RUN update-alternatives --set php /usr/bin/php7.4
+
 RUN pecl install psr
 RUN echo -e "\nextension=psr.so\n" >> /etc/php/7.4/fpm/php.ini && \
     echo -e "\nextension=psr.so\n" >> /etc/php/7.4/cli/php.ini
@@ -77,5 +78,7 @@ RUN mkdir /run/php
 
 # NGINX ports
 EXPOSE 80 443
+
+RUN echo "composer install" >> /run/entrypoint.sh
 
 CMD ["/usr/bin/supervisord"]
