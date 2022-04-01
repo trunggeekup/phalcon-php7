@@ -2,7 +2,16 @@
 
 #### build script
 ```
-docker build --platform linux/amd64 -t registry-gitlab.geekup.io/prj_vision/phalcon-php7:2.0.2 .
+docker build --platform linux/amd64 \
+    -t registry-gitlab.geekup.io/prj_vision/phalcon-php7:2.0.2 \
+    -t trungjs/phalcon-php7:latest \
+    -t trungjs/phalcon-php7:2.0.2 .
+```
+
+#### push image to docker hub
+```
+docker push -a registry-gitlab.geekup.io/prj_vision/phalcon-php7
+docker push -a trungjs/phalcon-php7
 ```
 
 - remove package: `python-software-properties`
