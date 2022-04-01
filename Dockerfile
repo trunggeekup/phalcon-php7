@@ -8,7 +8,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends apt-utils && \
     apt-get install -y software-properties-common
 
-RUN PACKAGES_TO_INSTALL="sudo curl unzip libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php7.4-dev php7.4-xdebug php7.4-gd php7.4-intl php7.4-xml php-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm supervisor libyaml-dev php7.4-mysql libgeoip-dev php7.4-redis" && \
+RUN PACKAGES_TO_INSTALL="sudo curl unzip libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php7.4-dev php7.4-gd php7.4-intl php7.4-xml php-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm supervisor libyaml-dev php7.4-mysql libgeoip-dev php7.4-redis" && \
     LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get install -y $PACKAGES_TO_INSTALL
