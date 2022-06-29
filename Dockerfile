@@ -79,6 +79,4 @@ RUN mkdir /run/php
 # NGINX ports
 EXPOSE 80 443
 
-RUN echo "composer install" >> /run/entrypoint.sh
-
 CMD ["/usr/bin/supervisord"]
