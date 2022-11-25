@@ -28,14 +28,13 @@ RUN apt update && apt upgrade -y && \
     apt clean && \
     apt autoclean
 
-RUN pear update-channels && pear upgrade && pecl channel-update pecl.php.net 
+RUN pear update-channels && pear upgrade && pecl channel-update pecl.php.net
 
 # # Install geoip
 RUN pecl install geoip-beta
 
 RUN echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/fpm/php.ini && \
     echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/cli/php.ini
-
 RUN pecl install psr
 RUN echo -e "\nextension=psr.so\n" >> /etc/php/7.4/fpm/php.ini && \
     echo -e "\nextension=psr.so\n" >> /etc/php/7.4/cli/php.ini
@@ -44,7 +43,10 @@ RUN echo -e "\nextension=psr.so\n" >> /etc/php/7.4/fpm/php.ini && \
 RUN curl https://www.openssl.org/source/openssl-1.1.1s.tar.gz --output /tmp/openssl-1.1.1s.tar.gz && \
     tar -xzvf /tmp/openssl-1.1.1s.tar.gz --directory /tmp && \
     cd /tmp/openssl-1.1.1s && ./config && make install && \
-    rm -rf /tmp/openssl*
+    rm -rf /tmp/openssl* && \
+    rm -rf /usr/local/ssl/certs && \
+    ln -s /etc/ssl/certs /usr/local/ssl/
+
 
 ENV PATH "$PATH:/usr/local/ssl/bin"
 ENV LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/usr/local/lib"
