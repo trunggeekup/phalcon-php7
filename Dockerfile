@@ -4,10 +4,13 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update && apt install -y --no-install-recommends apt-utils && apt install -y software-properties-common
 
-RUN PACKAGES_TO_INSTALL="curl unzip libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php7.4-dev php7.4-gd php7.4-intl php7.4-xml php-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm supervisor libyaml-dev php7.4-mysql libgeoip-dev php7.4-redis nginx" && \
+RUN PACKAGES_TO_INSTALL="curl unzip libc-dev libpcre3-dev pkg-config autoconf gcc make git gnupg2 ca-certificates lsb-release cron php7.4-dev php7.4-gd php7.4-intl php7.4-xml php-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-fpm supervisor libyaml-dev php7.4-mysql libgeoip-dev php7.4-redis ubuntu-keyring" && \
     LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php && \
     apt update && \
     apt install -y $PACKAGES_TO_INSTALL
+
+# Install nginx
+RUN curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor | tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null && echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list && echo "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" | tee /etc/apt/preferences.d/99-nginx && apt update && apt install nginx
 
 # config default version php using php7.4
 RUN update-alternatives --set php /usr/bin/php7.4
@@ -60,6 +63,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 # copy local defualt config file for NGINX
 COPY default /etc/nginx/sites-available/default
+
+# Remove default nginx config file
+RUN mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 
 # copy config file for Supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
