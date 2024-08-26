@@ -10,7 +10,11 @@ RUN PACKAGES_TO_INSTALL="curl unzip libc-dev libpcre3-dev pkg-config autoconf gc
     apt install -y $PACKAGES_TO_INSTALL
 
 # Install nginx
-RUN curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor | tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null && echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list && echo "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" | tee /etc/apt/preferences.d/99-nginx && apt update && apt install nginx
+RUN curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor | tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu `lsb_release -cs` nginx" | tee /etc/apt/sources.list.d/nginx.list && \
+    echo "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" | tee /etc/apt/preferences.d/99-nginx && \
+    apt update && \
+    apt install -y nginx
 
 # config default version php using php7.4
 RUN update-alternatives --set php /usr/bin/php7.4
@@ -42,16 +46,20 @@ RUN echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/fpm/php.ini && \
     echo -e "\nextension=geoip.so\n" >> /etc/php/7.4/cli/php.ini
 
 # Install OpenSSL
-RUN curl https://www.openssl.org/source/openssl-1.1.1v.tar.gz --output /tmp/openssl-1.1.1v.tar.gz && \
-    tar -xzvf /tmp/openssl-1.1.1v.tar.gz --directory /tmp && \
-    cd /tmp/openssl-1.1.1v && ./config && make install && \
+ENV OPENSSL_VERSION=3.3.1
+ENV OPENSSL_CHECKSUM=777cd596284c883375a2a7a11bf5d2786fc5413255efab20c50d6ffe6d020b7e
+
+RUN curl -fsSL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz -o /tmp/openssl-${OPENSSL_VERSION}.tar.gz && \
+    echo "${OPENSSL_CHECKSUM}  /tmp/openssl-${OPENSSL_VERSION}.tar.gz" | sha256sum -c - && \
+    tar -xzvf /tmp/openssl-${OPENSSL_VERSION}.tar.gz -C /tmp && \
+    cd /tmp/openssl-${OPENSSL_VERSION} && ./config && make install && \
     rm -rf /tmp/openssl* && \
     rm -rf /usr/local/ssl/certs && \
     ln -s /etc/ssl/certs /usr/local/ssl/
 
 
-ENV PATH "$PATH:/usr/local/ssl/bin"
-ENV LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/usr/local/lib"
+ENV PATH=$PATH:/usr/local/ssl/bin
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 
 RUN curl http://getcomposer.org/installer --output composer-setup.php && \
     php composer-setup.php  && \
